@@ -127,7 +127,14 @@ namespace lua { namespace stack {
         lua_pushstring(luaState, value);
         return 1;
     }
-    
+
+    template<>
+    inline int push(lua_State* luaState, std::string value) {
+        LUASTATE_DEBUG_LOG("  PUSH  %s", value.c_str());
+        lua_pushstring(luaState, value.c_str());
+        return 1;
+    }
+
     template<>
     inline int push(lua_State* luaState, const unsigned char* value) {
         LUASTATE_DEBUG_LOG("  PUSH  %s", value);
@@ -238,7 +245,7 @@ namespace lua { namespace stack {
     template<>
     inline bool check<lua::Nil>(lua_State* luaState, int index)
     {
-        return lua_isnil(luaState, index);
+        return lua_isnoneornil(luaState, index);
     }
     
     template<>
@@ -388,6 +395,11 @@ namespace lua { namespace stack {
     
     template<>
     inline const char* read(lua_State* luaState, int index) {
+        return lua_tostring(luaState, index);
+    }
+    
+    template<>
+    inline std::string read(lua_State* luaState, int index) {
         return lua_tostring(luaState, index);
     }
 

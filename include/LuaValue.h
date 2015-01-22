@@ -267,7 +267,7 @@ namespace lua {
         double toDouble() const {
             return to<double>();
         }
-        
+
         /// Will get pointer casted to given template type
         ///
         /// @return Pointer staticaly casted to given template type
@@ -345,6 +345,14 @@ namespace lua {
             lua_settable(_stack->state, _stack->top + _stack->pushed - _stack->grouped);
         }
         
+        int length() const {
+#if LUA_VERSION_NUM > 501
+            return lua_rawlen(_stack->state, _stack->top + _stack->pushed - _stack->grouped);
+#else
+            return lua_objlen(_stack->state, _stack->top + _stack->pushed - _stack->grouped);
+#endif
+        }
+
         template<typename K>
         void set(K key, const std::string& value) const {
             setString<lua::String>(key, value);
